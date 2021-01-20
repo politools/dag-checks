@@ -1,0 +1,19 @@
+area:checks:
+  - 'dag_checks/*'
+
+area:generator:
+  - 'cosmetics.py'
+  - 'generate.py'
+
+area:docs:
+  - '*.md'
+
+area:tests:
+  - 'tests/*'
+
+area:dev:
+  - '.github/*'
+  - '.pre-commit.config.yaml'
+  - 'Dockerfile*'
+  - 'docker*'
+  - 'setup.*'
