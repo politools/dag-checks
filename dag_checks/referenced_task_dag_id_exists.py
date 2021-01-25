@@ -11,7 +11,7 @@ class CheckOperatorsReferenceExistingDagTaskIds(BaseCheck):
         ).__init__(*args, **kwargs)
         self.dag_task_map = {d.dag_id: [t.task_id for t in d.tasks] for d in self.dag_bag.dags.values()}
 
-    def _check(self):
+    def get_errors(self):
         errors = []
         for dag in self.dag_bag.dags.values():
             for task in dag.tasks:

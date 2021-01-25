@@ -10,7 +10,7 @@ DEVEL_REQUIREMENTS = [
     "isort==4.3.21",
     "jinja2",
     "pre-commit==2.9.3",
-    "pylint",
+    "pylint==2.6.0",
     "pytest",
 ]
 

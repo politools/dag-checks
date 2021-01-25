@@ -17,14 +17,14 @@ class BaseCheck(object):  # pylint: disable=useless-object-inheritance
         self.dag_folder = dag_folder or DAGS_FOLDER
         self.dag_bag = DagBag(include_examples=False, dag_folder=self.dag_folder)
 
-    def _check(self):
+    def get_errors(self):
         raise NotImplementedError()
 
     def check(self):
         msg_lines = ["\n"]
         msg_lines += ["CHECKING: {}".format(self.__class__.__name__)]
         try:
-            errors = self._check()
+            errors = self.get_errors()
             if errors:
                 msg_lines += ["CHECK FAILED!"]
                 msg_lines.extend(errors)
@@ -37,15 +37,20 @@ class BaseCheck(object):  # pylint: disable=useless-object-inheritance
 
 
 class CheckEveryFileHasAtLeastOneDag(BaseCheck):
-    def _check(self):
+    def resolve_path(self, path):
+        return os.path.relpath(path=path, start=self.dag_folder)
+
+    def get_errors(self):
         errors = []
-        dag_files = {d.filepath for d in self.dag_bag.dags.values()}
-        # TODO: handle .airflowignore
+        dag_files = {self.resolve_path(d.filepath) for d in self.dag_bag.dags.values()}
         expected_dag_files = {
-            os.path.join(self.dag_folder, f) for f in os.listdir(self.dag_folder) if not f.startswith("_")
+            self.resolve_path(f) for f in os.listdir(self.dag_folder) if not f.startswith("_")
         }
         for file in expected_dag_files - dag_files:
-            errors.append("File {} seems to have no DAGs".format(file))
+            errors.append(
+                "File {} seems to have no DAGs. If that's intended "
+                "consider adding it to .airflowignore".format(os.path.basename(file))
+            )
 
         return errors
 
@@ -84,7 +89,7 @@ class CheckDAGShouldNotDoDbQueries(BaseCheck):
         def after_cursor_execute(self, *args, **kwargs):  # pylint: disable=unused-argument
             self.result.count += 1
 
-    def _check(self):
+    def get_errors(self):
         dags = glob(self.dag_folder + "/*.py", recursive=True)
         errors = []
         for filepath in dags:
@@ -105,7 +110,7 @@ class CheckOperatorsReferenceExistingDagTaskIds(BaseCheck):
         ).__init__(*args, **kwargs)
         self.dag_task_map = {d.dag_id: [t.task_id for t in d.tasks] for d in self.dag_bag.dags.values()}
 
-    def _check(self):
+    def get_errors(self):
         errors = []
         for dag in self.dag_bag.dags.values():
             for task in dag.tasks:

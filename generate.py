@@ -8,7 +8,13 @@ from typing import List, NamedTuple, Optional, Tuple
 from jinja2 import Template
 
 from cosmetics import apply_cosmetics
-from dag_checks.base import BaseCheck
+from tests import TEST_FOLDER
+
+# Set this before importing Airflow
+os.environ["AIRFLOW_HOME"] = TEST_FOLDER
+os.environ["AIRFLOW__CORE__SQL_ALCHEMY_CONN"] = "sqlite:///{}/airflow.db".format(TEST_FOLDER)
+
+from dag_checks.base import BaseCheck  # pylint: disable=wrong-import-position
 
 NL = "\n"
 KNOW_NEEDED_CLASSES = {BaseCheck}

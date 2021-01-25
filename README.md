@@ -1,5 +1,8 @@
 # DAG checks
 
+![CI](https://github.com/Polidea/dag-checks/workflows/CI/badge.svg?branch=main)
+[![License](https://img.shields.io/badge/License-Apache%202.0-green.svg)](https://opensource.org/licenses/Apache-2.0)
+
 The `dag-checks` consist of checks that can help you in maintaining
 your [Apache Airflow](https://airflow.apache.org) instance.
 

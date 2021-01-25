@@ -164,3 +164,9 @@ log.txt*
 pip-wheel-metadata
 
 .pypirc
+
+# Airflow from tests
+/tests/airflow.db
+/tests/airflow.cfg
+/tests/unittests.cfg
+/tests/logs/*

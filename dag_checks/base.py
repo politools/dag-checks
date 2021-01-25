@@ -7,14 +7,14 @@ class BaseCheck(object):  # pylint: disable=useless-object-inheritance
         self.dag_folder = dag_folder or DAGS_FOLDER
         self.dag_bag = DagBag(include_examples=False, dag_folder=self.dag_folder)
 
-    def _check(self):
+    def get_errors(self):
         raise NotImplementedError()
 
     def check(self):
         msg_lines = ["\n"]
         msg_lines += ["CHECKING: {}".format(self.__class__.__name__)]
         try:
-            errors = self._check()
+            errors = self.get_errors()
             if errors:
                 msg_lines += ["CHECK FAILED!"]
                 msg_lines.extend(errors)

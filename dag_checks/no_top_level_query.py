@@ -41,7 +41,7 @@ class CheckDAGShouldNotDoDbQueries(BaseCheck):
         def after_cursor_execute(self, *args, **kwargs):  # pylint: disable=unused-argument
             self.result.count += 1
 
-    def _check(self):
+    def get_errors(self):
         dags = glob(self.dag_folder + "/*.py", recursive=True)
         errors = []
         for filepath in dags:
